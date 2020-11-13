@@ -1,0 +1,63 @@
+#define R_LED 13
+#define G_LED 12
+#define B_LED 11
+#define PIN_GAS A0
+#define PIN_PIR A1
+#define PIN_SWITCH 2
+#define PIN_MOTOR_SWITCH 3
+#define PIN_POWER_SWITCH 4
+#define PIN_BUZZER 5
+
+int Air_value = 500;   
+int People_value = 1000; 
+void Air_cleaner();
+void People_detection();
+void Power_breaker();
+
+void setup() {
+  Serial.begin(9600); 
+  pinMode(R_LED, OUTPUT); pinMode(G_LED, OUTPUT); pinMode(B_LED, OUTPUT); 
+  pinMode(PIN_GAS, INPUT);  pinMode(PIN_PIR, INPUT); 
+  pinMode(PIN_SWITCH, INPUT);  
+  pinMode(PIN_MOTOR_SWITCH, OUTPUT); pinMode(PIN_POWER_SWITCH, OUTPUT); 
+  pinMode(PIN_BUZZER, OUTPUT);
+  digitalWrite(R_LED, LOW); digitalWrite(G_LED, HIGH); digitalWrite(B_LED, LOW); 
+  digitalWrite(PIN_MOTOR_SWITCH, LOW);  digitalWrite(PIN_POWER_SWITCH, LOW); 
+}
+
+void loop() {
+  delay(100);
+  Air_cleaner();
+  People_detection();
+  Power_breaker();
+}
+
+void Air_cleaner(){
+  if(analogRead(PIN_GAS) > Air_value){
+  digitalWrite(R_LED, HIGH); digitalWrite(G_LED, LOW); digitalWrite(B_LED, LOW);
+  digitalWrite(PIN_MOTOR_SWITCH, HIGH);
+ }else{
+  digitalWrite(R_LED, LOW); digitalWrite(G_LED, HIGH); digitalWrite(B_LED, LOW); 
+  digitalWrite(PIN_MOTOR_SWITCH, LOW);  
+ }  
+}
+
+void People_detection(){
+ if(digitalRead(PIN_SWITCH) == 0){ 
+ if(analogRead(PIN_PIR) > People_value){ 
+ digitalWrite(R_LED, HIGH); digitalWrite(G_LED, LOW); digitalWrite(B_LED, LOW);
+ tone(PIN_BUZZER, 1500);
+}else{
+ noTone(PIN_BUZZER);   
+}
+
+}else{ noTone(PIN_BUZZER);}
+}
+
+void Power_breaker(){
+ if(digitalRead(PIN_SWITCH) == 1){  
+  digitalWrite(PIN_POWER_SWITCH, LOW);  
+}else{
+  digitalWrite(PIN_POWER_SWITCH, HIGH); 
+}
+}
